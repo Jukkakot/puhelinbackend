@@ -64,10 +64,24 @@
       return response.status(400).json({ 
         error: 'content missing' 
       })
+    }else if(!body.name){
+        return response.status(400).json({ 
+            error: 'person name missing' 
+          })
+    }else if(!body.number){
+        return response.status(400).json({ 
+            error: 'person number missing' 
+          })
+    }
+    if(persons.find(person => person.name === body.name)){
+        return response.status(400).json({ 
+            error: 'name must be unique' 
+          })
     }
     const maxId = persons.length > 0
         ? Math.max(...persons.map(p => p.id)) 
         : 0
+
     const person = {
         name: body.name,
         number:body.number,
