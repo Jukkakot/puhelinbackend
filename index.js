@@ -58,7 +58,6 @@
   
   app.post('/api/persons', (request, response) => {
     const body = request.body
-    console.log(body)
     
     if (!body) {
       return response.status(400).json({ 
@@ -78,14 +77,10 @@
             error: 'name must be unique' 
           })
     }
-    const maxId = persons.length > 0
-        ? Math.max(...persons.map(p => p.id)) 
-        : 0
-
     const person = {
         name: body.name,
         number:body.number,
-        id: maxId+1
+        id: Math.floor(Math.random() * 50000)
       }
     persons = persons.concat(person)
 
