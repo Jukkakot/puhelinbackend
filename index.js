@@ -34,7 +34,7 @@
   })
 
   app.get('/info', (req, res) => {
-    res.send('Phone book has info for '+persons.length+" people <br>"+new Date)
+    res.send('Phonebook has info for '+persons.length+" people <br>"+new Date)
   })
   app.get('/api/persons', (req, res) => {
     res.json(persons)
