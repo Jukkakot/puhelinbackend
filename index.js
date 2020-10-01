@@ -1,6 +1,7 @@
 
   const express = require('express')
   const app = express()
+  app.use(express.json()) 
     let persons = [
         { 
             "name": "Arto Hellas", 
@@ -55,6 +56,28 @@
     response.status(204).end()
   })
   
+  app.post('/api/persons', (request, response) => {
+    const body = request.body
+    console.log(body)
+    
+    if (!body) {
+      return response.status(400).json({ 
+        error: 'content missing' 
+      })
+    }
+    const maxId = persons.length > 0
+        ? Math.max(...persons.map(p => p.id)) 
+        : 0
+    const person = {
+        name: body.name,
+        number:body.number,
+        id: maxId+1
+      }
+    persons = persons.concat(person)
+
+    response.json(person)
+  })
+
   const PORT = 3001
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
