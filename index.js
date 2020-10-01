@@ -5,34 +5,35 @@
   app.use(express.json()) 
   morgan.token('body', (req, res) => JSON.stringify(req.body))
   app.use(morgan(':method :url :status :res[content-length] :response-time ms :body'));
-  
+  const cors = require('cors')
+    app.use(cors())
     let persons = [
+    { 
+        "name": "Arto Hellas", 
+        "number": "040-123456",
+        "id": 1
+        },
         { 
-            "name": "Arto Hellas", 
-            "number": "040-123456",
-            "id": 1
-          },
-          { 
-            "name": "Ada Lovelace", 
-            "number": "39-44-5323523",
-            "id": 2
-          },
-          { 
-            "name": "Dan Abramov", 
-            "number": "12-43-234345",
-            "id": 3
-          },
-          { 
-            "name": "Mary Poppendieck", 
-            "number": "39-23-6423122",
-            "id": 4
-          },
-          { 
-            "name": "Jukka Kotilainen", 
-            "number": "123 123123123",
-            "id": 5
-          }
-          ]
+        "name": "Ada Lovelace", 
+        "number": "39-44-5323523",
+        "id": 2
+        },
+        { 
+        "name": "Dan Abramov", 
+        "number": "12-43-234345",
+        "id": 3
+        },
+        { 
+        "name": "Mary Poppendieck", 
+        "number": "39-23-6423122",
+        "id": 4
+        },
+        { 
+        "name": "Jukka Kotilainen", 
+        "number": "123 123123123",
+        "id": 5
+        }
+        ]
 
   app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
@@ -59,7 +60,29 @@
   
     response.status(204).end()
   })
-  
+  /*
+  app.put('/api/persons/:id', function (request, response) {
+    const body = request.body
+    const id = Number(request.params.id)
+    if (!body) {
+      return response.status(400).json({ 
+        error: 'content missing' 
+      })
+    }else if(!body.name){
+        return response.status(400).json({ 
+            error: 'person name missing' 
+          })
+    }else if(!body.number){
+        return response.status(400).json({ 
+            error: 'person number missing' 
+          })
+    }
+    const person = persons.find(person => person.id === id)
+    person.number = body.number
+    
+    response.json(person)
+  })
+  */
   app.post('/api/persons', (request, response) => {
     const body = request.body
     
@@ -91,7 +114,7 @@
     response.json(person)
   })
 
-  const PORT = 3001
+  const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
