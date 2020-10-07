@@ -9,9 +9,6 @@
   app.use(morgan(':method :url :status :res[content-length] :response-time ms :body'));
   const cors = require('cors')
   app.use(cors())
-
-  
-
   const PORT = process.env.PORT
 
   app.listen(PORT, () => {
@@ -22,9 +19,9 @@
   })
 
   app.get('/info', (req, res,next) => {
-    Person.find().then(person=> {
-      res.send("Phonebook has info for "+person.length+" people <br>"+new Date)
-    }).catch(error => next(error))
+    Person.find().count({}, function( err, count){
+      res.send("Phonebook has info for "+count+" people <br>"+new Date)
+  })
   })
   
   app.get('/api/persons', (request, response,next) => {
@@ -107,6 +104,8 @@
     })
     .catch(error => next(error))
   })
+
+
   const errorHandler = (error, request, response, next) => {
     console.error(error.message)
   
