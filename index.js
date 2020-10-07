@@ -9,7 +9,11 @@
   app.use(morgan(':method :url :status :res[content-length] :response-time ms :body'));
   const cors = require('cors')
   app.use(cors())
+
+  
+
   const PORT = process.env.PORT
+
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
@@ -17,19 +21,20 @@
     res.send('<h1>Hello World!</h1>')
   })
 
-  app.get('/info', (req, res) => {
+  app.get('/info', (req, res,next) => {
     Person.find().then(person=> {
       res.send("Phonebook has info for "+person.length+" people <br>"+new Date)
-    })
+    }).catch(error => next(error))
   })
   
-  app.get('/api/persons', (request, response) => {
+  app.get('/api/persons', (request, response,next) => {
     Person.find().then(person=> {
       response.json(person)
     })
+    .catch(error => next(error))
   })
   
-  app.get('/api/persons/:id', (request, response) => {
+  app.get('/api/persons/:id', (request, response,next) => {
     Person.findById(request.params.id)
       .then(person => {
         if(person){
@@ -38,28 +43,19 @@
           response.status(400).send({ error: 'malformatted id' })
         }
     })
-    .catch(error => {
-      console.log(error)
-      response.status(500).end()
-    })
+    .catch(error => next(error))
   })
-  app.delete('/api/persons/:id', (request, response) => {
+  app.delete('/api/persons/:id', (request, response,next) => {
     Person.findByIdAndRemove(request.params.id)
     .then(result => {
       response.status(204).end()
     })
     .catch(error => next(error))
-    /*
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
-  
-    response.status(204).end()
-    */
   })
   
-  app.put('/api/persons/:id', function (request, response) {
+  app.put('/api/persons/:id', function (request, response,next) {
     const body = request.body
-    const id = Number(request.params.id)
+    const id= request.params.id
     if (!body) {
       return response.status(400).json({ 
         error: 'content missing' 
@@ -73,16 +69,23 @@
             error: 'person number missing' 
           })
     }
-    const person = persons.find(person => person.id === id)
-    person.number = body.number
+    const person = {
+        id:id,
+        name:body.name,
+        number:body.number
+    }
+    Person.findByIdAndUpdate(id,person ,{ new: true })
+      .then(updatedPerson => {
+        response.json(updatedPerson)
+      })
+      .catch(error => next(error))
     
-    response.json(person)
   })
   
-  app.post('/api/persons', (request, response) => {
+  app.post('/api/persons', (request, response,next) => {
     const body = request.body
     
-    if (!body) {
+    if (Object.keys(body).length === 0) {
       return response.status(400).json({ 
         error: 'content missing' 
       })
@@ -95,12 +98,6 @@
             error: 'person number missing' 
           })
     }
-    /*
-    if(persons.find(person => person.name === body.name)){
-        return response.status(400).json({ 
-            error: 'name must be unique' 
-          })
-    }*/ 
     const person = new Person({
         name: body.name,
         number:body.number
@@ -108,5 +105,17 @@
     person.save().then(savedPerson=> {
       response.json(savedPerson)
     })
+    .catch(error => next(error))
   })
+  const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+  
+    if (error.name === 'CastError') {
+      return response.status(400).send({ error: 'malformatted id' })
+    }
+  
+    next(error)
+  }
+  
+  app.use(errorHandler)
 
