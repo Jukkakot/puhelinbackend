@@ -20,6 +20,7 @@
     "express": "^4.17.1",
     "heroku": "^7.44.0",
     "mongoose": "^5.10.8",
+    "mongoose-unique-validator": "^2.0.3",
     "morgan": "^1.10.0"
   },
   "devDependencies": {

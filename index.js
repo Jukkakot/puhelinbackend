@@ -84,8 +84,11 @@
         name: body.name,
         number:body.number
       })
-    person.save().then(savedPerson=> {
-      response.json(savedPerson)
+    person
+    .save()
+    .then(savedNote => savedNote.toJSON())
+    .then(savedAndFormattedPerson=>{
+      response.json(savedAndFormattedPerson)
     })
     .catch(error => next(error))
   })
