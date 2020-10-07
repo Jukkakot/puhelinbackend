@@ -30,15 +30,31 @@
   })
   
   app.get('/api/persons/:id', (request, response) => {
-    Person.findById(request.params.id).then(person => {
-      response.json(person)
+    Person.findById(request.params.id)
+      .then(person => {
+        if(person){
+          response.json(person)
+        } else {
+          response.status(400).send({ error: 'malformatted id' })
+        }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(500).end()
     })
   })
   app.delete('/api/persons/:id', (request, response) => {
+    Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
+    /*
     const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id)
   
     response.status(204).end()
+    */
   })
   
   app.put('/api/persons/:id', function (request, response) {
