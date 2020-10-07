@@ -19,23 +19,23 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 if(process.argv[3] && process.argv[4]){
-    const person = new Person({
-        nimi:process.argv[3],
-        numero:process.argv[4]
-      })
-      
-      person.save().then(response => {
-          console.log("added "+response.nimi+" "+response.numero+" to phonebook")
-        mongoose.connection.close()
-      })
+  const person = new Person({
+    nimi:process.argv[3],
+    numero:process.argv[4]
+  })
+
+  person.save().then(response => {
+    console.log("added "+response.nimi+" "+response.numero+" to phonebook")
+    mongoose.connection.close()
+  })
 } else {
-    Person
+  Person
     .find({})
     .then(persons => {
-        console.log("phonebook:")
-        persons.forEach(person => {
-          console.log(person.nimi+" "+person.numero)
-        })
-        mongoose.connection.close()
+      console.log("phonebook:")
+      persons.forEach(person => {
+        console.log(person.nimi+" "+person.numero)
       })
+      mongoose.connection.close()
+    })
 }
