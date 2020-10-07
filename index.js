@@ -89,9 +89,6 @@
         name: body.name,
         number:body.number
       })
-    //persons = persons.concat(person)
-
-    //response.json(person)
     person.save().then(savedPerson=> {
       response.json(savedPerson)
     })
