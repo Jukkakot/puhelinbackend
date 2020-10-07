@@ -53,18 +53,11 @@
   app.put('/api/persons/:id', function (request, response,next) {
     const body = request.body
     const id= request.params.id
-    if (!body) {
+
+    if (Object.keys(body).length === 0) {
       return response.status(400).json({ 
         error: 'content missing' 
       })
-    }else if(!body.name){
-        return response.status(400).json({ 
-            error: 'person name missing' 
-          })
-    }else if(!body.number){
-        return response.status(400).json({ 
-            error: 'person number missing' 
-          })
     }
     const person = {
         id:id,
@@ -86,14 +79,6 @@
       return response.status(400).json({ 
         error: 'content missing' 
       })
-    }else if(!body.name){
-        return response.status(400).json({ 
-            error: 'person name missing' 
-          })
-    }else if(!body.number){
-        return response.status(400).json({ 
-            error: 'person number missing' 
-          })
     }
     const person = new Person({
         name: body.name,
@@ -111,6 +96,8 @@
   
     if (error.name === 'CastError') {
       return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
     }
   
     next(error)
